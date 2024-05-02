@@ -66,4 +66,12 @@ class Minesweeper:
 
         self.refreshLabels()
 
-    
+    def refreshLabels(self):
+        self.labels["flags"].config(text=f"Flags: {self.flagCount}")
+        self.labels["mines"].config(text=f"Mines: {self.mines}")
+
+    def onClickWrapper(self, x, y):
+        return lambda Button: self.onClick(self.tiles[x][y])
+
+    def onRightClickWrapper(self, x, y):
+        return lambda Button: self.onRightClick(self.tiles[x][y])
