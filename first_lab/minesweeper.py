@@ -105,3 +105,35 @@ class Minesweeper:
         self.refreshLabels()
         if self.checkWinCondition():
             self.gameOver(True)
+    
+    def checkWinCondition(self):
+        if self.flagCount != self.mines:
+            return False
+        for x in range(self.size_x):
+            for y in range(self.size_y):
+                tile = self.tiles[x][y]
+                if tile["isMine"] and tile["state"] != 2:
+                    return False
+                if not tile["isMine"] and tile["state"] == 2:
+                    return False
+        return True
+
+    def clearSurroundingTiles(self, id):
+        queue = deque([id])
+        seen = set(queue)
+        while queue:
+            current_id = queue.popleft()
+            x, y = map(int, current_id.split("_"))
+            current_tile = self.tiles[x][y]
+            if current_tile["state"] == 0:
+                current_tile["button"].config(text=" ", bg="#b5ebcd")
+                current_tile["state"] = 1
+                self.clickedCount += 1
+                if current_tile["mines"] == 0:
+                    for neighbor in self.getNeighbors(x, y):
+                        neighbor_id = neighbor["id"]
+                        if neighbor_id not in seen:
+                            queue.append(neighbor_id)
+                            seen.add(neighbor_id)
+                else:
+                    current_tile["button"].config(text=str(current_tile["mines"]))
