@@ -157,3 +157,38 @@ class Minesweeper:
             elapsed = now - self.startTime
             self.labels["time"].config(text=str(elapsed).split(".")[0])
         self.tk.after(1000, self.updateTimer)
+
+    def gameOver(self, won):
+        self.startTime = None  # Stop the timer
+        for x in range(self.size_x):
+            for y in range(self.size_y):
+                tile = self.tiles[x][y]
+                if tile["isMine"]:
+                    tile["button"].config(text="*" if tile["state"] != 2 else "|>")
+                elif tile["state"] == 2:
+                    tile["button"].config(text="|>", bg="red")
+                else:
+                    tile["button"].config(text=str(tile["mines"]) if tile["mines"] > 0 else " ")
+        self.tk.update()
+
+        msg = "You Win! Play again?" if won else "You Lose! Play again?"
+        play_again = messagebox.askyesno("Game Over", msg)
+
+        if play_again:
+            self.frame.destroy()
+            self.start_game()
+        else:
+            if messagebox.askyesno("Quit", "Do you want to exit the game?"):
+                self.tk.quit()
+            else:
+                self.frame.destroy()
+                self.start_game()
+
+
+def main():
+    root = Tk()
+    app = Minesweeper(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
