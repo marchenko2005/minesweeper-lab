@@ -75,3 +75,33 @@ class Minesweeper:
 
     def onRightClickWrapper(self, x, y):
         return lambda Button: self.onRightClick(self.tiles[x][y])
+    
+    def onClick(self, tile):
+        if self.startTime is None:
+            self.startTime = datetime.now()
+        if tile["state"] in (1, 2):
+            return
+        if tile["isMine"]:
+            self.gameOver(False)
+        elif tile["mines"] == 0:
+            tile["button"].config(text=" ", bg="#b5ebcd")
+            self.clearSurroundingTiles(tile["id"])
+        else:
+            tile["button"].config(text=str(tile["mines"]))
+        tile["state"] = 1
+        self.clickedCount += 1
+        if self.clickedCount == (self.size_x * self.size_y - self.mines):
+            self.gameOver(True)
+
+    def onRightClick(self, tile):
+        if tile["state"] == 0:
+            tile["button"].config(text="|>", bg="#edb766")
+            tile["state"] = 2
+            self.flagCount += 1
+        elif tile["state"] == 2:
+            tile["button"].config(text=" ", bg="#d9d9d9")
+            tile["state"] = 0
+            self.flagCount -= 1
+        self.refreshLabels()
+        if self.checkWinCondition():
+            self.gameOver(True)
