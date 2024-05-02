@@ -137,3 +137,23 @@ class Minesweeper:
                             seen.add(neighbor_id)
                 else:
                     current_tile["button"].config(text=str(current_tile["mines"]))
+
+    def getNeighbors(self, x, y):
+        start_x = max(0, x-1)
+        end_x = min(self.size_x, x+2)
+        start_y = max(0, y-1)
+        end_y = min(self.size_y, y+2)
+
+        neighbors = []
+        for nx in range(start_x, end_x):
+            for ny in range(start_y, end_y):
+                if (nx, ny) != (x, y):
+                    neighbors.append(self.tiles[nx][ny])
+
+        return neighbors
+    def updateTimer(self):
+        if self.startTime is not None:
+            now = datetime.now()
+            elapsed = now - self.startTime
+            self.labels["time"].config(text=str(elapsed).split(".")[0])
+        self.tk.after(1000, self.updateTimer)
